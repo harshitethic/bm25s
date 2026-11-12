@@ -625,6 +625,11 @@ class BM25:
         if not isinstance(query_tokens_single, list):
             raise ValueError("The query_tokens must be a list of tokens.")
 
+        # A query containing only stopwords can tokenize to an empty list.
+        # Keep direct scoring consistent with get_scores_from_ids and retrieve.
+        if not query_tokens_single:
+            return self.get_scores_from_ids([], weight_mask=weight_mask)
+
         if isinstance(query_tokens_single[0], str):
             query_tokens_ids = self.get_tokens_ids(query_tokens_single)
         elif isinstance(query_tokens_single[0], int):
